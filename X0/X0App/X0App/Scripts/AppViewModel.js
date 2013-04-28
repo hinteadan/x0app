@@ -1,10 +1,11 @@
 ﻿/// <reference path="underscore.js" />
 /// <reference path="knockout.js" />
 /// <reference path="X0App.js" />
+/// <reference path="SmartPlayer.js" />
 
 (function () {
 
-    function dummyPlayerTurnAction(board, notifyMark) {
+    function dummyPlayerTurnAction(board, ownMark, notifyMark) {
         var firstNonMarkedCell = null;
 
         _.each(board, function (row, rowIndex) {
@@ -39,8 +40,7 @@
     function AppViewModel() {
 
         var players = ko.observableArray([
-                new Player('Dummy PC', 'PC', dummyPlayerTurnAction),
-                //new Player('Player 0', '0', manualPlayerTurnAction),
+                new Player('Dummy PC', 'PC', SmartPlayer.TurnAction),
                 new Player('Hintee', 'H', manualPlayerTurnAction)
             ]),
             gameInfo = new X0App.GameInfo(3, _.pluck(players(), 'AppPlayer'), 1),
@@ -69,7 +69,7 @@
             markNotifier.call(this, new X0App.Advanced.Cell(x, y));
         }
 
-        function manualPlayerTurnAction(board, notifyMark) {
+        function manualPlayerTurnAction(board, ownMark, notifyMark) {
             isManualPlay(true);
             markNotifier = function (cellToMark) {
                 isManualPlay(false);

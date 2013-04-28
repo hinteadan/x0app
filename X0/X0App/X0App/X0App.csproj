@@ -64,7 +64,9 @@
     <Content Include="Scripts\AppViewModel.js" />
     <Content Include="Scripts\knockout.js" />
     <Content Include="Scripts\qunit.js" />
+    <Content Include="Scripts\SmartPlayer.js" />
     <Content Include="Scripts\Tests.js" />
+    <Content Include="Scripts\TestsSmartPlayer.js" />
     <Content Include="Scripts\underscore.js" />
     <Content Include="Scripts\X0App.js" />
     <Content Include="Tests.html" />

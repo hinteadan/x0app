@@ -230,7 +230,7 @@
             var boardAsReadOnly = currentBoard.AsReadOnly(),
                 currentPlayer = gameInfo.Players[currentPlayerIndex];
 
-            currentPlayer.PlayerTurnAction.call(boardAsReadOnly, boardAsReadOnly, function (cellToMark) {
+            currentPlayer.PlayerTurnAction.call(boardAsReadOnly, boardAsReadOnly, currentPlayer.Mark, function (cellToMark) {
                 currentBoard.Mark(cellToMark.X, cellToMark.Y, currentPlayer.Mark);
                 eventHandler.Raise(eventHandler.Events.CellMarked, currentBoard.AsReadOnly());
                 currentPlayerIndex = currentPlayerIndex + 1 >= gameInfo.Players.length ? 0 : currentPlayerIndex + 1;
