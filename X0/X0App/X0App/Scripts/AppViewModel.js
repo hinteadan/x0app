@@ -4,7 +4,7 @@
 
 (function () {
 
-    function dummyPlayerTurnAction(board) {
+    function dummyPlayerTurnAction(board, notifyMark) {
         var firstNonMarkedCell = null;
 
         _.each(board, function (row, rowIndex) {
@@ -20,7 +20,7 @@
             });
         });
 
-        return firstNonMarkedCell;
+        notifyMark.call(firstNonMarkedCell, firstNonMarkedCell);
     }
 
     function Player(name, mark, turnAction){
@@ -39,23 +39,53 @@
     function AppViewModel() {
 
         var players = ko.observableArray([
-                new Player('Player X', 'X', dummyPlayerTurnAction),
-                new Player('Player 0', '0', dummyPlayerTurnAction)
+                new Player('Dummy PC', 'PC', dummyPlayerTurnAction),
+                //new Player('Player 0', '0', manualPlayerTurnAction),
+                new Player('Hintee', 'H', manualPlayerTurnAction)
             ]),
-            gameInfo = new X0App.GameInfo(3, _.pluck(players(), 'AppPlayer'), 100),
+            gameInfo = new X0App.GameInfo(3, _.pluck(players(), 'AppPlayer'), 1),
             gameCoordinator = new X0App.GameCoordinator(gameInfo),
-            finishedBoards = ko.observableArray();
+            finishedBoards = ko.observableArray(),
+            currentBoard = ko.observable(),
+            isManualPlay = ko.observable(false),
+            markNotifier = null;
 
         this.GameInfo = gameInfo;
         this.Players = players;
         this.Start = start;
         this.Boards = finishedBoards;
+        this.CurrentBoard = currentBoard;
+        this.IsManualPlay = isManualPlay;
+        this.MarkCell = markCell;
 
         function start() {
             gameCoordinator.Play();
         }
 
+        function markCell(x, y) {
+            if (!markNotifier) {
+                return;
+            }
+            markNotifier.call(this, new X0App.Advanced.Cell(x, y));
+        }
+
+        function manualPlayerTurnAction(board, notifyMark) {
+            isManualPlay(true);
+            markNotifier = function (cellToMark) {
+                isManualPlay(false);
+                markNotifier = null;
+                notifyMark(cellToMark);
+            }
+        }
+
         function construct() {
+
+            function updateCurrentBoard(board) {
+                currentBoard(board);
+            }
+
+            gameCoordinator.Events.AddNewGameHandler(updateCurrentBoard);
+            gameCoordinator.Events.AddCellMarkedHandler(updateCurrentBoard);
             gameCoordinator.Events.AddGameEndedHandler(function (gameEndInfo) {
                 finishedBoards.push(gameEndInfo.Board);
                 if (!gameEndInfo.HasWinner) {

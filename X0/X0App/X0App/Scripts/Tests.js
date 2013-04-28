@@ -12,14 +12,70 @@
 
         ok(!board.HasWinner());
 
+        board.Mark(0, 1, 'X');
+        ok(!board.HasWinner());
+        board.Mark(1, 1, 'X');
+        ok(!board.HasWinner());
+        board.Mark(2, 1, 'X');
+        ok(board.HasWinner());
+        ok(_.all(board.WinnerCells(), function (c) { return c.Y === 1; }));
+
+    });
+
+    test("Win Full Row", function () {
+        var board = new X0App.Advanced.Board(3);
+
+        ok(!board.HasWinner());
+
+        board.Mark(0, 1, 'X');
+        ok(!board.HasWinner());
+        board.Mark(1, 1, 'X');
+        ok(!board.HasWinner());
+        board.Mark(2, 1, 'X');
+        ok(board.HasWinner());
+        ok(_.all(board.WinnerCells(), function (c) { return c.Y === 1; }));
+    });
+
+    test("Win Full Column", function () {
+        var board = new X0App.Advanced.Board(3);
+
+        ok(!board.HasWinner());
+
+        board.Mark(1, 0, 'X');
+        ok(!board.HasWinner());
+        board.Mark(1, 1, 'X');
+        ok(!board.HasWinner());
+        board.Mark(1, 2, 'X');
+        ok(board.HasWinner());
+        ok(_.all(board.WinnerCells(), function (c) { return c.X === 1; }));
+    });
+
+    test("Win Diagonal 1", function () {
+        var board = new X0App.Advanced.Board(3);
+
+        ok(!board.HasWinner());
+
         board.Mark(0, 0, 'X');
         ok(!board.HasWinner());
-        board.Mark(1, 0, 'X');
+        board.Mark(1, 1, 'X');
+        ok(!board.HasWinner());
+        board.Mark(2, 2, 'X');
+        ok(board.HasWinner());
+        ok(_.all(board.WinnerCells(), function (c) { return c.X === c.Y; }));
+    });
+
+    test("Win Diagonal 2", function () {
+        var board = new X0App.Advanced.Board(3);
+
+        ok(!board.HasWinner());
+
+        board.Mark(0, 2, 'X');
+        ok(!board.HasWinner());
+        board.Mark(1, 1, 'X');
         ok(!board.HasWinner());
         board.Mark(2, 0, 'X');
         ok(board.HasWinner());
-        ok(_.all(board.WinnerCells(), function (c) { return c.Y === 0; }));
-
+        ok(_.all(board.WinnerCells(), function (c) { return c.X === 3 - c.Y - 1; }));
     });
 
 }).call(this);

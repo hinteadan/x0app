@@ -47,7 +47,8 @@
         var events = {
                 NewGame: 'NEW_GAME',
                 EndGame: 'END_GAME',
-                PlayerTurn: 'PLAYER_TURN'
+                PlayerTurn: 'PLAYER_TURN',
+                CellMarked: 'CELL_MARKED'
             },
             eventHandlers = [];
 
@@ -143,7 +144,7 @@
                 }
                 if (_.all(board, function (row) { return row[index].IsMarked() && row[index].Mark === board[0][index].Mark; })) {
                     //Full Column
-                    winnerCells = _.union(winnerCells, _.select(flatBoard, function (c) { return c.Y === index; }));
+                    winnerCells = _.union(winnerCells, _.select(flatBoard, function (c) { return c.X === index; }));
                 }
             });
 
@@ -160,7 +161,8 @@
 
         function markCell(x, y, mark) {
             if (board[y][x].IsMarked()) {
-                throw new Error('The cell is already marked');
+                return;
+                //throw new Error('The cell is already marked');
             }
             board[y][x].Mark = mark;
         }
@@ -210,23 +212,30 @@
 
         }, eventHandler.Events.EndGame);
 
+        function checkAndProcessGameFinish() {
+            if (currentBoard.IsCompleted()) {
+                endCurrentBoard();
+                return;
+            }
+            playerMakesHisMoveAndPaysItForward(checkAndProcessGameFinish);
+        }
+
         function startGame() {
             currentBoard = new GameBoard(gameInfo.Size);
             eventHandler.Raise(eventHandler.Events.NewGame, currentBoard.AsReadOnly());
-            while (!currentBoard.IsCompleted()) {
-                playerMakesHisMoveAndPaysItForward();
-            }
-            endCurrentBoard();
+            playerMakesHisMoveAndPaysItForward(checkAndProcessGameFinish);
         }
 
-        function playerMakesHisMoveAndPaysItForward() {
+        function playerMakesHisMoveAndPaysItForward(onTurnFinished) {
             var boardAsReadOnly = currentBoard.AsReadOnly(),
-                currentPlayer = gameInfo.Players[currentPlayerIndex],
-                cellToMark = currentPlayer.PlayerTurnAction.call(boardAsReadOnly, boardAsReadOnly);
+                currentPlayer = gameInfo.Players[currentPlayerIndex];
 
-            currentBoard.Mark(cellToMark.X, cellToMark.Y, currentPlayer.Mark);
-
-            currentPlayerIndex = currentPlayerIndex + 1 >= gameInfo.Players.length ? 0 : currentPlayerIndex + 1;
+            currentPlayer.PlayerTurnAction.call(boardAsReadOnly, boardAsReadOnly, function (cellToMark) {
+                currentBoard.Mark(cellToMark.X, cellToMark.Y, currentPlayer.Mark);
+                eventHandler.Raise(eventHandler.Events.CellMarked, currentBoard.AsReadOnly());
+                currentPlayerIndex = currentPlayerIndex + 1 >= gameInfo.Players.length ? 0 : currentPlayerIndex + 1;
+                onTurnFinished.call();
+            });
         }
 
         function endCurrentBoard() {
@@ -242,7 +251,11 @@
         this.Play = playGame;
         this.Events = {
             AddGameEndedHandler: function (handler) { eventHandler.Add(handler, eventHandler.Events.EndGame); },
-            RemoveGameEndedHandler: function (handler) { eventHandler.Remove(handler, eventHandler.Events.EndGame); }
+            RemoveGameEndedHandler: function (handler) { eventHandler.Remove(handler, eventHandler.Events.EndGame); },
+            AddCellMarkedHandler: function (handler) { eventHandler.Add(handler, eventHandler.Events.CellMarked); },
+            RemoveCellMarkedHandler: function (handler) { eventHandler.Remove(handler, eventHandler.Events.CellMarked); },
+            AddNewGameHandler: function (handler) { eventHandler.Add(handler, eventHandler.Events.NewGame); },
+            RemoveNewGameHandler: function (handler) { eventHandler.Remove(handler, eventHandler.Events.NewGame); }
         };
     }
 
