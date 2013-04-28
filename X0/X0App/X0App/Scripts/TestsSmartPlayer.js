@@ -5,38 +5,12 @@
 
 (function () {
 
+    var x = 'X',
+        o = '0',
+        smartPlayer = new SmartPlayer.Player();
+
     function cellToMark(board, ownMark) {
-        var size = board.length,
-            corners = [
-                new X0App.Advanced.Cell(0, 0),
-                new X0App.Advanced.Cell(size - 1, 0),
-                new X0App.Advanced.Cell(size - 1, size - 1),
-                new X0App.Advanced.Cell(0, size - 1)
-            ];
-            opponentMarkCell = null;
-
-        _.each(board, function (row, rowIndex) {
-            if (opponentMarkCell) {
-                return;
-            }
-            _.each(row, function (cell, cellIndex) {
-                if (opponentMarkCell) {
-                    return;
-                }
-                if (cell != null && cell !== ownMark) {
-                    opponentMarkCell = new X0App.Advanced.Cell(cellIndex, rowIndex);
-                }
-            });
-        });
-
-        if (!opponentMarkCell) {
-
-        }
-
-        return !opponentMarkCell 
-            ? corners[_.random(3)]
-            : new X0App.Advanced.Cell(Math.abs(size - opponentMarkCell.X - 1), Math.abs(size - opponentMarkCell.Y - 1))
-        ;
+        return smartPlayer.CellToMark(board, ownMark);
     }
 
     module("Smart Player");
@@ -47,7 +21,7 @@
                 [null, null, null],
                 [null, null, null]
             ],
-            c = cellToMark(board, 'X');
+            c = cellToMark(board, x);
 
         ok((c.X == 0 && c.Y == 0)
             || (c.X == 2 && c.Y == 0)
@@ -57,94 +31,122 @@
 
     test("Second Move on 3x3", function () {
         var board = [
-            ['X', null, null],
+            [x, null, null],
             [null, null, null],
             [null, null, null]
         ],
-            c = cellToMark(board, '0');
-        ok(c.X == 2 && c.Y == 2);
+            c = cellToMark(board, o);
+        ok((c.X == 1 && c.Y == 2) || (c.X == 2 && c.Y == 1));
 
         board = [
-            [null, null, 'X'],
+            [null, null, x],
             [null, null, null],
             [null, null, null]
         ];
-        c = cellToMark(board, '0');
-        ok(c.X == 0 && c.Y == 2);
+        c = cellToMark(board, o);
+        ok((c.X == 0 && c.Y == 1) || (c.X == 1 && c.Y == 2));
 
         board = [
             [null, null, null],
             [null, null, null],
-            [null, null, 'X']
+            [null, null, x]
         ];
-        c = cellToMark(board, '0');
-        ok(c.X == 0 && c.Y == 0);
+        c = cellToMark(board, o);
+        ok((c.X == 1 && c.Y == 0) || (c.X == 0 && c.Y == 1));
 
         board = [
             [null, null, null],
             [null, null, null],
-            ['X', null, null]
+            [x, null, null]
         ];
-        c = cellToMark(board, '0');
-        ok(c.X == 2 && c.Y == 0);
+        c = cellToMark(board, o);
+        ok((c.X == 1 && c.Y == 0) || (c.X == 2 && c.Y == 1));
     });
 
     test("Third Move on 3x3", function () {
         var board = [
-                ['X', null, 'X'],
+                [x, null, x],
                 [null, null, null],
-                [null, null, '0']
-            ],
-            c = cellToMark(board, '0');
+                [null, null, o]
+        ],
+            c = cellToMark(board, o);
         ok(c.X == 1 && c.Y == 0);
 
         board = [
-            ['X', 'X', null],
+            [x, x, null],
             [null, null, null],
-            [null, null, '0']
+            [null, null, o]
         ];
-        c = cellToMark(board, '0');
-        ok(c.X == 0 && c.Y == 2);
+        c = cellToMark(board, o);
+        ok(c.X == 2 && c.Y == 0);
 
         board = [
-            ['X', null, null],
+            [x, null, null],
             [null, null, null],
-            ['X', null, '0']
+            [x, null, o]
         ];
-        c = cellToMark(board, '0');
+        c = cellToMark(board, o);
         ok(c.X == 0 && c.Y == 1);
 
         board = [
-            ['X', null, null],
-            ['X', null, null],
-            [null, null, '0']
+            [x, null, null],
+            [x, null, null],
+            [null, null, o]
         ];
-        c = cellToMark(board, '0');
+        c = cellToMark(board, o);
         ok(c.X == 0 && c.Y == 2);
 
         board = [
-            ['X', null, null],
-            [null, 'X', null],
-            [null, null, '0']
+            [x, null, null],
+            [null, x, null],
+            [null, null, o]
         ];
-        c = cellToMark(board, '0');
+        c = cellToMark(board, o);
         ok((c.X == 0 && c.Y == 2) || (c.X == 2 && c.Y == 0));
 
         board = [
-            ['X', null, null],
+            [x, null, null],
             [null, null, null],
-            [null, 'X', '0']
+            [null, x, o]
         ];
-        c = cellToMark(board, '0');
+        c = cellToMark(board, o);
         ok((c.X == 2 && c.Y == 1) || (c.X == 2 && c.Y == 0));
 
         board = [
-            ['X', null, null],
-            [null, null, 'X'],
-            [null, null, '0']
+            [x, null, null],
+            [null, null, x],
+            [null, null, o]
         ];
-        c = cellToMark(board, '0');
+        c = cellToMark(board, o);
         ok((c.X == 0 && c.Y == 2) || (c.X == 1 && c.Y == 2));
-    })
+    });
+
+    test("Fourth Move on 3x3", function () {
+        var board = [
+                [x, o, x],
+                [x, null, null],
+                [null, null, o]
+        ],
+            c = cellToMark(board, o);
+        ok(c.X == 0 && c.Y == 2);
+
+        board = [
+            [x, o, x],
+            [null, x, null],
+            [null, null, o]
+        ];
+        c = cellToMark(board, o);
+        ok(c.X == 0 && c.Y == 2);
+    });
+
+    test("Winning position", function () {
+        var board = [
+                [x, null, null],
+                [null, o, o],
+                [null, x, x]
+        ],
+            c = cellToMark(board, o);
+        ok(c.X == 0 && c.Y == 1);
+    });
 
 }).call(this);

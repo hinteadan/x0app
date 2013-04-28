@@ -5,25 +5,6 @@
 
 (function () {
 
-    function dummyPlayerTurnAction(board, ownMark, notifyMark) {
-        var firstNonMarkedCell = null;
-
-        _.each(board, function (row, rowIndex) {
-            if (firstNonMarkedCell) {
-                return;
-            }
-            _.each(row, function (cell, cellIndex) {
-                if (firstNonMarkedCell || board[rowIndex][cellIndex] !== null) {
-                    return;
-                }
-
-                firstNonMarkedCell = new X0App.Advanced.Cell(cellIndex, rowIndex);
-            });
-        });
-
-        notifyMark.call(firstNonMarkedCell, firstNonMarkedCell);
-    }
-
     function Player(name, mark, turnAction){
         var self = this,
             appPlayer = new X0App.Player(mark, name, turnAction);
@@ -40,7 +21,7 @@
     function AppViewModel() {
 
         var players = ko.observableArray([
-                new Player('Dummy PC', 'PC', SmartPlayer.TurnAction),
+                new Player('PC', 'PC', SmartPlayer.TurnAction),
                 new Player('Hintee', 'H', manualPlayerTurnAction)
             ]),
             gameInfo = new X0App.GameInfo(3, _.pluck(players(), 'AppPlayer'), 1),
