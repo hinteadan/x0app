@@ -2,6 +2,7 @@
 /// <reference path="knockout.js" />
 /// <reference path="X0App.js" />
 /// <reference path="SmartPlayer.js" />
+/// <reference path="RandomCellPlayer.js" />
 
 (function () {
 
@@ -21,10 +22,11 @@
     function AppViewModel() {
 
         var players = ko.observableArray([
-                new Player('PC', 'PC', SmartPlayer.TurnAction),
-                new Player('Hintee', 'H', manualPlayerTurnAction)
+                new Player('Smart PC', 'SmtCPU', SmartPlayer.TurnAction),
+                new Player('Random PC', 'RndCPU', RandomCellPlayer.TurnAction),
+                //new Player('Hintee', 'H', manualPlayerTurnAction),
             ]),
-            gameInfo = new X0App.GameInfo(3, _.pluck(players(), 'AppPlayer'), 1),
+            gameInfo = new X0App.GameInfo(3, _.pluck(players(), 'AppPlayer'), 100),
             gameCoordinator = new X0App.GameCoordinator(gameInfo),
             finishedBoards = ko.observableArray(),
             currentBoard = ko.observable(),

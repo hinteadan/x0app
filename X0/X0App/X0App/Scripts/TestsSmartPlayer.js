@@ -2,12 +2,14 @@
 /// <reference path="qunit.js" />
 /// <reference path="X0App.js" />
 /// <reference path="SmartPlayer.js" />
+/// <reference path="RandomCellPlayer.js" />
 
 (function () {
 
     var x = 'X',
         o = '0',
-        smartPlayer = new SmartPlayer.Player();
+        //smartPlayer = new SmartPlayer.Player();
+        smartPlayer = new RandomCellPlayer.Player();
 
     function cellToMark(board, ownMark) {
         return smartPlayer.CellToMark(board, ownMark);
