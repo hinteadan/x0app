@@ -3,6 +3,7 @@
 /// <reference path="X0App.js" />
 /// <reference path="SmartPlayer.js" />
 /// <reference path="RandomCellPlayer.js" />
+/// <reference path="AggressivePlayer.js" />
 
 (function () {
 
@@ -24,12 +25,14 @@
         var players = ko.observableArray([
                 new Player('Smart PC', 'SmtCPU', SmartPlayer.TurnAction),
                 new Player('Random PC', 'RndCPU', RandomCellPlayer.TurnAction),
+                new Player('Aggressive PC', 'AgrCPU', AggressivePlayer.TurnAction),
                 //new Player('Hintee', 'H', manualPlayerTurnAction),
-            ]),
-            gameInfo = new X0App.GameInfo(3, _.pluck(players(), 'AppPlayer'), 100),
+        ]),
+            gameInfo = new X0App.GameInfo(5, _.pluck(players(), 'AppPlayer'), 10),
             gameCoordinator = new X0App.GameCoordinator(gameInfo),
             finishedBoards = ko.observableArray(),
             currentBoard = ko.observable(),
+            gamesPlayed = ko.observable(0),
             isManualPlay = ko.observable(false),
             markNotifier = null;
 
@@ -38,6 +41,7 @@
         this.Start = start;
         this.Boards = finishedBoards;
         this.CurrentBoard = currentBoard;
+        this.GamesPlayed = gamesPlayed;
         this.IsManualPlay = isManualPlay;
         this.MarkCell = markCell;
 
@@ -71,6 +75,7 @@
             gameCoordinator.Events.AddCellMarkedHandler(updateCurrentBoard);
             gameCoordinator.Events.AddGameEndedHandler(function (gameEndInfo) {
                 finishedBoards.push(gameEndInfo.Board);
+                gamesPlayed(gamesPlayed() + 1);
                 if (!gameEndInfo.HasWinner) {
                     return;
                 }

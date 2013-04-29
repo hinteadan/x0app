@@ -60,6 +60,7 @@
     <Content Include="css\qunit.css" />
     <Content Include="css\site.css" />
     <Content Include="index.html" />
+    <Content Include="Scripts\AggressivePlayer.js" />
     <Content Include="Scripts\App.js" />
     <Content Include="Scripts\AppViewModel.js" />
     <Content Include="Scripts\knockout.js" />
