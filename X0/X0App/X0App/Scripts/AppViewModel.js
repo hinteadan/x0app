@@ -61,12 +61,12 @@
     function AppViewModel() {
 
         var players = ko.observableArray([
-                new Player('Smart PC', 'SmtCPU', SmartPlayer.TurnAction),
-                new Player('Random PC', 'RndCPU', RandomCellPlayer.TurnAction),
+                //new Player('Smart PC', 'SmtCPU', SmartPlayer.TurnAction),
+                //new Player('Random PC', 'RndCPU', RandomCellPlayer.TurnAction),
                 new Player('Aggressive PC', 'AgrCPU', AggressivePlayer.TurnAction),
-                //new Player('Hintee', 'H', manualPlayerTurnAction),
+                new Player('Hintee', 'H', manualPlayerTurnAction),
         ]),
-            gameInfo = new X0App.GameInfo(3, _.pluck(players(), 'AppPlayer'), 5),
+            gameInfo = new X0App.GameInfo(3, _.pluck(players(), 'AppPlayer'), 1),
             gameCoordinator = new X0App.GameCoordinator(gameInfo),
             finishedBoards = ko.observableArray(),
             currentBoard = ko.observable(),

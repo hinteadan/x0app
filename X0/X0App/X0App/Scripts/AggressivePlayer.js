@@ -110,7 +110,7 @@
                 opponentCellsOnSecondDiagonal = _(opponentCells).select(function (c) { return c.X === size - c.Y - 1; }),
                 cellToReturn = null;
 
-            if (opponentCellsOnMainDiagonal.length === size - 2) {
+            if (opponentCellsOnMainDiagonal.length === size - 1) {
                 _(size).times(function (index) {
                     if (cellToReturn != null) { return; }
                     if (board[index][index] === null) {
