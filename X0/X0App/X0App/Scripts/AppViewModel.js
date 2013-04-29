@@ -20,6 +20,44 @@
         });
     }
 
+    function ArchivedBoard(gameEndInfo) {
+
+        var board = [],
+            winnerInfo = new WinnerInfo(gameEndInfo.HasWinner ? gameEndInfo.WinningCells[0].Mark : 'No winner in this game');
+
+        function Cell(mark, x, y, isWinner) {
+            this.Mark = mark || '';
+            this.X = x;
+            this.Y = y;
+            this.IsWinner = isWinner;
+        }
+
+        function WinnerInfo(name) {
+            this.Name = name || '';
+        }
+
+        function construct() {
+            _(gameEndInfo.Board).each(function (row, rowIndex) {
+                board.push([]);
+                _(row).each(function (cell, cellIndex) {
+                    board[rowIndex].push(new Cell(
+                        cell,
+                        cellIndex,
+                        rowIndex,
+                        _(gameEndInfo.WinningCells).any(function (c) {
+                            return c.X === cellIndex && c.Y === rowIndex;
+                        })
+                        ));
+                });
+            });
+        }
+
+        construct();
+
+        this.Board = board;
+        this.Winner = winnerInfo;
+    }
+
     function AppViewModel() {
 
         var players = ko.observableArray([
@@ -28,7 +66,7 @@
                 new Player('Aggressive PC', 'AgrCPU', AggressivePlayer.TurnAction),
                 //new Player('Hintee', 'H', manualPlayerTurnAction),
         ]),
-            gameInfo = new X0App.GameInfo(5, _.pluck(players(), 'AppPlayer'), 10),
+            gameInfo = new X0App.GameInfo(3, _.pluck(players(), 'AppPlayer'), 5),
             gameCoordinator = new X0App.GameCoordinator(gameInfo),
             finishedBoards = ko.observableArray(),
             currentBoard = ko.observable(),
@@ -74,7 +112,7 @@
             gameCoordinator.Events.AddNewGameHandler(updateCurrentBoard);
             gameCoordinator.Events.AddCellMarkedHandler(updateCurrentBoard);
             gameCoordinator.Events.AddGameEndedHandler(function (gameEndInfo) {
-                finishedBoards.push(gameEndInfo.Board);
+                finishedBoards.push(new ArchivedBoard(gameEndInfo));
                 gamesPlayed(gamesPlayed() + 1);
                 if (!gameEndInfo.HasWinner) {
                     return;

@@ -48,10 +48,11 @@
     <button data-bind="click: Start">Start Game</button>
 
     <!-- ko foreach: Boards -->
+    <h4 data-bind="text: 'Winner: ' + Winner.Name"></h4>
     <table>
-        <tbody data-bind="foreach: $data">
+        <tbody data-bind="foreach: Board">
             <tr data-bind="foreach: $data">
-                <td data-bind="text: $data"></td>
+                <td data-bind="text: Mark, css: { highlight: IsWinner }"></td>
             </tr>
         </tbody>
     </table>
